@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Master - Learn Git from Scratch</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .terminal {
+            background-color: #1e1e1e;
+            color: #f0f0f0;
+            font-family: 'Courier New', monospace;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .prompt {
+            color: #4CAF50;
+        }
+        .command {
+            color: #64B5F6;
+        }
+        .output {
+            color: #f0f0f0;
+        }
+        .error {
+            color: #f44336;
+        }
+        .success {
+            color: #4CAF50;
+        }
+        .typing {
+            border-right: 2px solid #4CAF50;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            from, to { border-color: transparent; }
+            50% { border-color: #4CAF50; }
+        }
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+        .tab-active {
+            border-bottom: 3px solid #3b82f6;
+            color: #3b82f6;
+        }
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fab fa-git-alt text-3xl"></i>
+                    <h1 class="text-2xl font-bold">Git Master</h1>
+                </div>
+                <div class="flex space-x-4">
+                    <button id="darkModeToggle" class="p-2 rounded-full hover:bg-blue-700 transition">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg font-medium transition">
+                        Sign In
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Welcome Section -->
+        <section class="mb-12 text-center">
+            <h2 class="text-4xl font-bold text-gray-800 mb-4">Welcome to Git Master</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                The easiest way to learn Git version control from scratch. Master the essential commands and workflows used by developers worldwide.
+            </p>
+            <div class="mt-8">
+                <button id="startLearningBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold text-lg transition transform hover:scale-105">
+                    Start Learning <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Progress Tracker -->
+        <section id="progressSection" class="mb-12 bg-white p-6 rounded-xl shadow-md hidden">
+            <h3 class="text-2xl font-semibold text-gray-800 mb-4">Your Progress</h3>
+            <div class="mb-4">
+                <div class="flex justify-between mb-2">
+                    <span class="text-gray-700">Course Completion</span>
+                    <span id="progressPercent" class="text-blue-600 font-medium">0%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-4">
+                    <div id="progressBar" class="progress-bar bg-blue-600 h-4 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <div class="flex items-center mb-2">
+                        <div class="bg-blue-100 p-2 rounded-full mr-3">
+                            <i class="fas fa-check-circle text-blue-600"></i>
+                        </div>
+                        <span class="font-medium text-gray-800">Completed Lessons</span>
+                    </div>
+                    <p id="completedLessons" class="text-3xl font-bold text-gray-800 ml-12">0</p>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <div class="flex items-center mb-2">
+                        <div class="bg-green-100 p-2 rounded-full mr-3">
+                            <i class="fas fa-star text-green-600"></i>
+                        </div>
+                        <span class="font-medium text-gray-800">Quiz Score</span>
+                    </div>
+                    <p id="quizScore" class="text-3xl font-bold text-gray-800 ml-12">0%</p>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <div class="flex items-center mb-2">
+                        <div class="bg-purple-100 p-2 rounded-full mr-3">
+                            <i class="fas fa-terminal text-purple-600"></i>
+                        </div>
+                        <span class="font-medium text-gray-800">Commands Practiced</span>
+                    </div>
+                    <p id="commandsPracticed" class="text-3xl font-bold text-gray-800 ml-12">0</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Learning Tabs -->
+        <section id="learningSection" class="hidden">
+            <div class="flex border-b border-gray-200 mb-6">
+                <button class="tab-btn px-6 py-3 font-medium text-gray-600 hover:text-blue-600 transition tab-active" data-tab="lessons">
+                    <i class="fas fa-book-open mr-2"></i> Lessons
+                </button>
+                <button class="tab-btn px-6 py-3 font-medium text-gray-600 hover:text-blue-600 transition" data-tab="terminal">
+                    <i class="fas fa-terminal mr-2"></i> Terminal
+                </button>
+                <button class="tab-btn px-6 py-3 font-medium text-gray-600 hover:text-blue-600 transition" data-tab="quiz">
+                    <i class="fas fa-question-circle mr-2"></i> Quiz
+                </button>
+                <button class="tab-btn px-6 py-3 font-medium text-gray-600 hover:text-blue-600 transition" data-tab="cheatsheet">
+                    <i class="fas fa-file-alt mr-2"></i> Cheat Sheet
+                </button>
+            </div>
+
+            <!-- Lessons Tab -->
+            <div id="lessons" class="tab-content slide-in">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Git Basics</h3>
+                        <div class="space-y-4">
+                            <div class="lesson-item p-4 border border-gray-200 rounded-lg hover:bg-blue-50 transition cursor-pointer" data-lesson="1">
+                                <div class="flex items-center">
+                                    <div class="lesson-status w-6 h-6 rounded-full border-2 border-gray-300 mr-3 flex items-center justify-center">
+                                        <i class="fas fa-check text-white text-xs hidden"></i>
+                                    </div>
+                                    <h4 class="font-medium text-gray-800">1. What is Git?</h4>
+                                </div>
+                                <p class="text-gray-600 ml-9 mt-1">Understand version control and why Git is important</p>
+                            </div>
+                            <div class="lesson-item p-4 border border-gray-200 rounded-lg hover:bg-blue-50 transition cursor-pointer" data-lesson="2">
+                                <div class="flex items-center">
+                                    <div class="lesson-status w-6 h-6 rounded-full border-2 border-gray-300 mr-3 flex items-center justify-center">
+                                        <i class="fas fa-check text-white text-xs hidden"></i>
+                                    </div>
+                                    <h4 class="font-medium text-gray-800">2. Installing Git</h4>
+                                </div>
+                                <p class="text-gray-600 ml-9 mt-1">Set up Git on your computer</p>
+                            </div>
+                            <div class="lesson-item p-4 border border-gray-200 rounded-lg hover:bg-blue-50 transition cursor-pointer" data-lesson="3">
+                                <div class="flex items-center">
+                                    <div class="lesson-status w-6 h-6 rounded-full border-2 border-gray-300 mr-3 flex items-center justify-center">
+                                        <i class="fas fa-check text-white text-xs hidden"></i>
+                                    </div>
+                                    <h4 class="font-medium text-gray-800">3. Creating a Repository</h4>
+                                </div>
+                                <p class="text-gray-600 ml-9 mt-1">Initialize your first Git repository</p>
+                            </div>
+                            <div class="lesson-item p-4 border border-gray-200 rounded-lg hover:bg-blue-50 transition cursor-pointer" data-lesson="4">
+                                <div class="flex items-center">
+                                    <div class="lesson-status w-6 h-6 rounded-full border-2 border-gray-300 mr-3 flex items-center justify-center">
+                                        <i class="fas fa-check text-white text-xs hidden"></i>
+                                    </div>
+                                    <h4 class="font-medium text-gray-800">4. Making Commits</h4>
+                                </div>
+                                <p class="text-gray-600 ml-9 mt-1">Learn to save your work with commits</p>
+                            </div>
+                            <div class="lesson-item p-4 border border-gray-200 rounded-lg hover:bg-blue-50 transition cursor-pointer" data-lesson="5">
+                                <div class="flex items-center">
+                                    <div class="lesson-status w-6 h-6 rounded-full border-2 border-gray-300 mr-3 flex items-center justify-center">
+                                        <i class="fas fa-check text-white text-xs hidden"></i>
+                                    </div>
+                                    <h4 class="font-medium text-gray-800">5. Branching</h4>
+                                </div>
+                                <p class="text-gray-600 ml-9 mt-1">Create and switch between branches</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terminal Tab -->
+            <div id="terminal" class="tab-content hidden">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Git Terminal Simulator</h3>
+                        <p class="text-gray-600 mb-6">Practice Git commands in a safe environment. Type 'help' to see available commands.</p>
+                        
+                        <div class="terminal p-4 rounded-lg mb-4 h-64 overflow-y-auto">
+                            <div class="output mb-2">Welcome to Git Terminal Simulator!</div>
+                            <div class="output mb-2">Type 'help' to see available commands.</div>
+                            <div id="terminalHistory"></div>
+                            <div class="flex items-center">
+                                <span class="prompt mr-2">$</span>
+                                <input id="terminalInput" type="text" class="bg-transparent border-none outline-none flex-grow command" autocomplete="off" spellcheck="false">
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <button class="command-btn bg-gray-200 hover:bg-gray-300 px-3 py-2 rounded text-sm font-medium" data-command="git init">git init</button>
+                            <button class="command-btn bg-gray-200 hover:bg-gray-300 px-3 py-2 rounded text-sm font-medium" data-command="git status">git status</button>
+                            <button class="command-btn bg-gray-200 hover:bg-gray-300 px-3 py-2 rounded text-sm font-medium" data-command="git add .">git add .</button>
+                            <button class="command-btn bg-gray-200 hover:bg-gray-300 px-3 py-2 rounded text-sm font-medium" data-command="git commit -m 'message'">git commit</button>
+                            <button class="command-btn bg-gray-200 hover:bg-gray-300 px-3 py-2 rounded text-sm font-medium" data-command="git branch">git branch</button>
+                            <button class="command-btn bg-gray-200 hover:bg-gray-300 px-3 py-2 rounded text-sm font-medium" data-command="git checkout -b new-branch">git checkout</button>
+                            <button class="command-btn bg-gray-200 hover:bg-gray-300 px-3 py-2 rounded text-sm font-medium" data-command="git log">git log</button>
+                            <button class="command-btn bg-gray-200 hover:bg-gray-300 px-3 py-2 rounded text-sm font-medium" data-command="clear">clear</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Tab -->
+            <div id="quiz" class="tab-content hidden">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Git Knowledge Quiz</h3>
+                        <p class="text-gray-600 mb-6">Test your understanding of Git concepts with these multiple-choice questions.</p>
+                        
+                        <div id="quizContainer">
+                            <div class="quiz-question p-4 border border-gray-200 rounded-lg mb-4">
+                                <h4 class="font-medium text-gray-800 mb-3">1. What command initializes a new Git repository?</h4>
+                                <div class="space-y-2">
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="radio" name="q1" value="A" class="h-4 w-4 text-blue-600">
+                                        <span>git start</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="radio" name="q1" value="B" class="h-4 w-4 text-blue-600">
+                                        <span>git new</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="radio" name="q1" value="C" class="h-4 w-4 text-blue-600">
+                                        <span class="font-medium">git init</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="radio" name="q1" value="D" class="h-4 w-4 text-blue-600">
+                                        <span>git create</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="quiz-question p-4 border border-gray-200 rounded-lg mb-4">
+                                <h4 class="font-medium text-gray-800 mb-3">2. What does 'git add .' do?</h4>
+                                <div class="space-y-2">
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="radio" name="q2" value="A" class="h-4 w-4 text-blue-600">
+                                        <span>Creates a new branch</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="radio" name="q2" value="B" class="h-4 w-4 text-blue-600">
+                                        <span class="font-medium">Stages all changes for commit</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="radio" name="q2" value="C" class="h-4 w-4 text-blue-600">
+                                        <span>Shows the commit history</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="radio" name="q2" value="D" class="h-4 w-4 text-blue-600">
+                                        <span>Connects to a remote repository</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="quiz-question p-4 border border-gray-200 rounded-lg mb-4">
+                                <h4 class="font-medium text-gray-800 mb-3">3. What is the purpose of branching in Git?</h4>
+                                <div class="space-y-2">
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="radio" name="q3" value="A" class="h-4 w-4 text-blue-600">
+                                        <span>To delete old commits</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="radio" name="q3" value="B" class="h-4 w-4 text-blue-600">
+                                        <span>To change the repository name</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="radio" name="q3" value="C" class="h-4 w-4 text-blue-600">
+                                        <span class="font-medium">To work on different features or fixes in isolation</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="radio" name="q3" value="D" class="h-4 w-4 text-blue-600">
+                                        <span>To backup the entire repository</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <button id="submitQuizBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition">
+                                Submit Quiz
+                            </button>
+                        </div>
+                        
+                        <div id="quizResults" class="hidden mt-6 p-4 bg-green-50 rounded-lg">
+                            <div class="flex items-center">
+                                <i class="fas fa-check-circle text-green-600 text-2xl mr-3"></i>
+                                <div>
+                                    <h4 class="font-semibold text-green-800">Quiz Completed!</h4>
+                                    <p id="quizScoreText" class="text-green-700">Your score: <span class="font-bold">0</span>/3</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cheat Sheet Tab -->
+            <div id="cheatsheet" class="tab-content hidden">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Git Command Cheat Sheet</h3>
+                        <p class="text-gray-600 mb-6">Quick reference for common Git commands.</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-blue-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-blue-800 mb-3 flex items-center">
+                                    <i class="fas fa-code-branch mr-2"></i> Basic Commands
+                                </h4>
+                                <ul class="space-y-2">
+                                    <li><span class="font-mono bg-blue-100 px-2 py-1 rounded text-sm">git init</span> - Initialize a new Git repository</li>
+                                    <li><span class="font-mono bg-blue-100 px-2 py-1 rounded text-sm">git clone [url]</span> - Clone a remote repository</li>
+                                    <li><span class="font-mono bg-blue-100 px-2 py-1 rounded text-sm">git status</span> - Show the working tree status</li>
+                                    <li><span class="font-mono bg-blue-100 px-2 py-1 rounded text-sm">git add [file]</span> - Add file contents to the index</li>
+                                    <li><span class="font-mono bg-blue-100 px-2 py-1 rounded text-sm">git commit -m "[message]"</span> - Record changes to the repository</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="bg-green-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-green-800 mb-3 flex items-center">
+                                    <i class="fas fa-code-branch mr-2"></i> Branching
+                                </h4>
+                                <ul class="space-y-2">
+                                    <li><span class="font-mono bg-green-100 px-2 py-1 rounded text-sm">git branch</span> - List branches</li>
+                                    <li><span class="font-mono bg-green-100 px-2 py-1 rounded text-sm">git branch [name]</span> - Create a new branch</li>
+                                    <li><span class="font-mono bg-green-100 px-2 py-1 rounded text-sm">git checkout [branch]</span> - Switch to a branch</li>
+                                    <li><span class="font-mono bg-green-100 px-2 py-1 rounded text-sm">git merge [branch]</span> - Merge a branch into the active branch</li>
+                                    <li><span class="font-mono bg-green-100 px-2 py-1 rounded text-sm">git branch -d [branch]</span> - Delete a branch</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="bg-purple-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-purple-800 mb-3 flex items-center">
+                                    <i class="fas fa-history mr-2"></i> History
+                                </h4>
+                                <ul class="space-y-2">
+                                    <li><span class="font-mono bg-purple-100 px-2 py-1 rounded text-sm">git log</span> - Show commit logs</li>
+                                    <li><span class="font-mono bg-purple-100 px-2 py-1 rounded text-sm">git log --oneline</span> - Compact commit logs</li>
+                                    <li><span class="font-mono bg-purple-100 px-2 py-1 rounded text-sm">git diff</span> - Show changes between commits</li>
+                                    <li><span class="font-mono bg-purple-100 px-2 py-1 rounded text-sm">git show [commit]</span> - Show various types of objects</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="bg-yellow-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-yellow-800 mb-3 flex items-center">
+                                    <i class="fas fa-cloud mr-2"></i> Remote
+                                </h4>
+                                <ul class="space-y-2">
+                                    <li><span class="font-mono bg-yellow-100 px-2 py-1 rounded text-sm">git remote add [name] [url]</span> - Add a remote repository</li>
+                                    <li><span class="font-mono bg-yellow-100 px-2 py-1 rounded text-sm">git push [remote] [branch]</span> - Push to a remote repository</li>
+                                    <li><span class="font-mono bg-yellow-100 px-2 py-1 rounded text-sm">git pull [remote] [branch]</span> - Fetch from and integrate with another repository</li>
+                                    <li><span class="font-mono bg-yellow-100 px-2 py-1 rounded text-sm">git fetch [remote]</span> - Download objects from a remote repository</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lesson Modal -->
+        <div id="lessonModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 id="lessonTitle" class="text-2xl font-semibold text-gray-800">Lesson Title</h3>
+                        <button id="closeLessonModal" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div id="lessonContent" class="prose max-w-none">
+                        <!-- Content will be inserted here -->
+                    </div>
+                    
+                    <div class="mt-6 flex justify-between">
+                        <button id="prevLessonBtn" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg font-medium transition hidden">
+                            <i class="fas fa-arrow-left mr-2"></i> Previous
+                        </button>
+                        <button id="nextLessonBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition">
+                            Next <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <div class="flex items-center space-x-2">
+                        <i class="fab fa-git-alt text-2xl"></i>
+                        <span class="text-xl font-bold">Git Master</span>
+                    </div>
+                    <p class="text-gray-400 mt-2">Learn Git the easy way</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <i class="fab fa-discord"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2023 Git Master. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            const isDark = document.body.classList.contains('dark');
+            darkModeToggle.innerHTML = isDark 
+                ? '<i class="fas fa-sun"></i>' 
+                : '<i class="fas fa-moon"></i>';
+            
+            // Save preference to localStorage
+            localStorage.setItem('darkMode', isDark);
+        });
+
+        // Check for saved dark mode preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark');
+            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+
+        // Tab switching
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.getAttribute('data-tab');
+                
+                // Update active tab button
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('tab-active', 'text-blue-600');
+                    btn.classList.add('text-gray-600');
+                });
+                button.classList.add('tab-active', 'text-blue-600');
+                button.classList.remove('text-gray-600');
+                
+                // Show selected tab content
+                tabContents.forEach(content => {
+                    content.classList.add('hidden');
+                    if (content.id === tabId) {
+                        content.classList.remove('hidden');
+                        content.classList.add('slide-in');
+                    }
+                });
+            });
+        });
+
+        // Start learning button
+        const startLearningBtn = document.getElementById('startLearningBtn');
+        const learningSection = document.getElementById('learningSection');
+        const progressSection = document.getElementById('progressSection');
+
+        startLearningBtn.addEventListener('click', () => {
+            learningSection.classList.remove('hidden');
+            progressSection.classList.remove('hidden');
+            startLearningBtn.closest('section').classList.add('hidden');
+            
+            // Scroll to learning section
+            learningSection.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Lesson items
+        const lessonItems = document.querySelectorAll('.lesson-item');
+        const lessonModal = document.getElementById('lessonModal');
+        const lessonTitle = document.getElementById('lessonTitle');
+        const lessonContent = document.getElementById('lessonContent');
+        const closeLessonModal = document.getElementById('closeLessonModal');
+        const nextLessonBtn = document.getElementById('nextLessonBtn');
+        const prevLessonBtn = document.getElementById('prevLessonBtn');
+
+        // Lesson data
+        const lessons = {
+            1: {
+                title: "What is Git?",
+                content: `
+                    <h3>Understanding Version Control</h3>
+                    <p>Version control is a system that records changes to a file or set of files over time so that you can recall specific versions later. It allows you to:</p>
+                    <ul>
+                        <li>Revert files back to a previous state</li>
+                        <li>Revert the entire project back to a previous state</li>
+                        <li>Compare changes over time</li>
+                        <li>See who last modified something that might be causing a problem</li>
+                        <li>Recover lost files</li>
+                    </ul>
+                    
+                    <h3 class="mt-6">Why Git?</h3>
+                    <p>Git is a distributed version control system. Unlike centralized version control systems, every Git working directory is a full-fledged repository with complete history and full version-tracking capabilities.</p>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg mt-6">
+                        <h4 class="font-semibold text-blue-800">Key Features of Git:</h4>
+                        <ul class="mt-2">
+                            <li><strong>Speed:</strong> Git is fast. Most operations are performed locally.</li>
+                            <li><strong>Simple design:</strong> Git has a simple architecture that makes it easy to understand.</li>
+                            <li><strong>Strong support for non-linear development:</strong> Git supports rapid branching and merging.</li>
+                            <li><strong>Fully distributed:</strong> Every clone is a full backup of the repository.</li>
+                            <li><strong>Efficient handling of large projects:</strong> Git is very efficient in handling large projects.</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-green-50 p-4 rounded-lg mt-6">
+                        <h4 class="font-semibold text-green-800">Git vs Other VCS</h4>
+                        <p class="mt-2">Unlike other version control systems (like Subversion), Git doesn't rely on a central server to store all the versions of a project's files. Instead, every developer "clones" a copy of a repository and has the full history of the project on their own hard drive.</p>
+                    </div>
+                `
+            },
+            2: {
+                title: "Installing Git",
+                content: `
+                    <h3>Installing Git on Different Platforms</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-blue-800">Windows</h4>
+                            <ol class="mt-2 list-decimal pl-5 space-y-1">
+                                <li>Download the latest Git for Windows installer from <a href="https://git-scm.com/download/win" class="text-blue-600 hover:underline" target="_blank">git-scm.com</a></li>
+                                <li>Run the installer</li>
+                                <li>Follow the instructions in the installer</li>
+                                <li>Open Command Prompt and type <code class="bg-blue-100 px-1 rounded">git --version</code> to verify</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-green-800">macOS</h4>
+                            <ol class="mt-2 list-decimal pl-5 space-y-1">
+                                <li>Install Xcode Command Line Tools by running <code class="bg-green-100 px-1 rounded">xcode-select --install</code> in Terminal</li>
+                                <li>Alternatively, install Git via Homebrew: <code class="bg-green-100 px-1 rounded">brew install git</code></li>
+                                <li>Verify with <code class="bg-green-100 px-1 rounded">git --version</code></li>
+                            </ol>
+                        </div>
+                        
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-purple-800">Linux (Debian/Ubuntu)</h4>
+                            <ol class="mt-2 list-decimal pl-5 space-y-1">
+                                <li>Run <code class="bg-purple-100 px-1 rounded">sudo apt update</code></li>
+                                <li>Install Git with <code class="bg-purple-100 px-1 rounded">sudo apt install git</code></li>
+                                <li>Verify with <code class="bg-purple-100 px-1 rounded">git --version</code></li>
+                            </ol>
+                        </div>
+                        
+                        <div class="bg-yellow-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-yellow-800">Linux (Fedora/CentOS)</h4>
+                            <ol class="mt-2 list-decimal pl-5 space-y-1">
+                                <li>Run <code class="bg-yellow-100 px-1 rounded">sudo dnf install git</code></li>
+                                <li>Verify with <code class="bg-yellow-100 px-1 rounded">git --version</code></li>
+                            </ol>
+                        </div>
+                    </div>
+                    
+                    <h3 class="mt-6">Configuring Git</h3>
+                    <p>After installing Git, you should configure your identity:</p>
+                    <div class="bg-gray-100 p-4 rounded-lg mt-2">
+                        <code class="block">git config --global user.name "Your Name"</code>
+                        <code class="block mt-2">git config --global user.email "your.email@example.com"</code>
+                    </div>
+                    
+                    <p class="mt-4">You can check your configuration with:</p>
+                    <div class="bg-gray-100 p-4 rounded-lg mt-2">
+                        <code class="block">git config --list</code>
+                    </div>
+                `
+            },
+            3: {
+                title: "Creating a Repository",
+                content: `
+                    <h3>Initializing a New Repository</h3>
+                    <p>To create a new Git repository, navigate to your project directory in the terminal and run:</p>
+                    <div class="bg-gray-100 p-4 rounded-lg mt-2">
+                        <code class="block">git init</code>
+                    </div>
+                    <p class="mt-4">This creates a new subdirectory named <code class="bg-gray-100 px-1 rounded">.git</code> that contains all of your necessary repository files.</p>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg mt-6">
+                        <h4 class="font-semibold text-blue-800">What happens when you run git init?</h4>
+                        <ul class="mt-2">
+                            <li>Creates a <code class="bg-blue-100 px-1 rounded">.git</code> subdirectory in your project</li>
+                            <li>Initializes the repository structure inside <code class="bg-blue-100 px-1 rounded">.git</code></li>
+                            <li>Sets up the basic configuration needed for version control</li>
+                            <li>Creates an initial branch (usually <code class="bg-blue-100 px-1 rounded">master</code> or <code class="bg-blue-100 px-1 rounded">main</code>)</li>
+                        </ul>
+                    </div>
+                    
+                    <h3 class="mt-6">Cloning an Existing Repository</h3>
+                    <p>If you want to get a copy of an existing Git repository, use <code class="bg-gray-100 px-1 rounded">git clone</code>:</p>
+                    <div class="bg-gray-100 p-4 rounded-lg mt-2">
+                        <code class="block">git clone https://github.com/user/repo.git</code>
+                    </div>
+                    <p class="mt-4">This creates a directory named <code class="bg-gray-100 px-1 rounded">repo</code>, initializes a <code class="bg-gray-100 px-1 rounded">.git</code> directory inside it, pulls down all the data for that repository, and checks out a working copy of the latest version.</p>
+                    
+                    <div class="bg-green-50 p-4 rounded-lg mt-6">
+                        <h4 class="font-semibold text-green-800">Cloning to a specific directory</h4>
+                        <p class="mt-2">You can specify a different directory name:</p>
+                        <div class="bg-green-100 p-4 rounded-lg mt-2">
+                            <code class="block">git clone https://github.com/user/repo.git my-project</code>
+                        </div>
+                    </div>
+                `
+            },
+            4: {
+                title: "Making Commits",
+                content: `
+                    <h3>The Git Workflow</h3>
+                    <p>Git has three main states that your files can reside in:</p>
+                    <ol class="list-decimal pl-5 mt-2 space-y-1">
+                        <li><strong>Modified:</strong> You've changed the file but haven't committed it yet</li>
+                        <li><strong>Staged:</strong> You've marked a modified file to go into your next commit</li>
+                        <li><strong>Committed:</strong> The file is safely stored in your local database</li>
+                    </ol>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg mt-6">
+                        <h4 class="font-semibold text-blue-800">Basic Git Workflow</h4>
+                        <ol class="list-decimal pl-5 mt-2 space-y-1">
+                            <li>Modify files in your working directory</li>
+                            <li>Stage the files, adding snapshots of them to your staging area</li>
+                            <li>Commit, which takes the files as they are in the staging area and stores that snapshot permanently</li>
+                        </ol>
+                    </div>
+                    
+                    <h3 class="mt-6">Checking File Status</h3>
+                    <p>To see which files are in which state, use:</p>
+                    <div class="bg-gray-100 p-4 rounded-lg mt-2">
+                        <code class="block">git status</code>
+                    </div>
+                    
+                    <h3 class="mt-6">Staging Files</h3>
+                    <p>To stage a file for commit:</p>
+                    <div class="bg-gray-100 p-4 rounded-lg mt-2">
+                        <code class="block">git add filename</code>
+                    </div>
+                    <p class="mt-4">To stage all changed files:</p>
+                    <div class="bg-gray-100 p-4 rounded-lg mt-2">
+                        <code class="block">git add .</code>
+                    </div>
+                    
+                    <h3 class="mt-6">Making a Commit</h3>
+                    <p>To commit your staged changes:</p>
+                    <div class="bg-gray-100 p-4 rounded-lg mt-2">
+                        <code class="block">git commit -m "Commit message"</code>
+                    </div>
+                    <p class="mt-4">A good commit message:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1">
+                        <li>Is concise (50 characters or less for the subject line)</li>
+                        <li>Describes what changed, not why (the diff shows what)</li>
+                        <li>Uses the imperative mood ("Add feature" not "Added feature")</li>
+                    </ul>
+                    
+                    <div class="bg-green-50 p-4 rounded-lg mt-6">
+                        <h4 class="font-semibold text-green-800">Skipping the Staging Area</h4>
+                        <p class="mt-2">You can commit all tracked files that have been modified without staging them first:</p>
+                        <div class="bg-green-100 p-4 rounded-lg mt-2">
+                            <code class="block">git commit -a -m "Commit message"</code>
+                        </div>
+                    </div>
+                `
+            },
+            5: {
+                title: "Branching",
+                content: `
+                    <h3>What is a Branch?</h3>
+                    <p>A branch in Git is simply a lightweight movable pointer to one of the commits. The default branch name in Git is <code class="bg-gray-100 px-1 rounded">master</code> (or <code class="bg-gray-100 px-1 rounded">main</code> in newer repositories).</p>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg mt-6">
+                        <h4 class="font-semibold text-blue-800">Why Use Branches?</h4>
+                        <ul class="mt-2">
+                            <li>Develop features in isolation</li>
+                            <li>Experiment without affecting the main codebase</li>
+                            <li>Work on multiple features simultaneously</li>
+                            <li>Maintain different versions (production, staging, development)</li>
+                        </ul>
+                    </div>
+                    
+                    <h3 class="mt-6">Creating a New Branch</h3>
+                    <p>To create a new branch:</p>
+                    <div class="bg-gray-100 p-4 rounded-lg mt-2">
+                        <code class="block">git branch branch-name</code>
+                    </div>
+                    <p class="mt-4">This creates a new pointer to the current commit but doesn't switch to it.</p>
+                    
+                    <h3 class="mt-6">Switching Branches</h3>
+                    <p>To switch to an existing branch:</p>
+                    <div class="bg-gray-100 p-4 rounded-lg mt-2">
+                        <code class="block">git checkout branch-name</code>
+                    </div>
+                    <p class="mt-4">To create and switch to a new branch in one command:</p>
+                    <div class="bg-gray-100 p-4 rounded-lg mt-2">
+                        <code class="block">git checkout -b new-branch</code>
+                    </div>
+                    
+                    <h3 class="mt-6">Listing Branches</h3>
+                    <p>To see all branches in your repository:</p>
+                    <div class="bg-gray-100 p-4 rounded-lg mt-2">
+                        <code class="block">git branch</code>
+                    </div>
+                    <p class="mt-4">The current branch will be highlighted and marked with an asterisk (*).</p>
+                    
+                    <h3 class="mt-6">Merging Branches</h3>
+                    <p>To merge changes from one branch into another:</p>
+                    <ol class="list-decimal pl-5 mt-2 space-y-1">
+                        <li>Checkout the branch you want to merge into (usually <code class="bg-gray-100 px-1 rounded">main</code> or <code class="bg-gray-100 px-1 rounded">master</code>)</li>
+                        <li>Run the merge command with the branch you want to merge from</li>
+                    </ol>
+                    <div class="bg-gray-100 p-4 rounded-lg mt-2">
+                        <code class="block">git checkout main</code>
+                        <code class="block mt-2">git merge branch-name</code>
+                    </div>
+                    
+                    <div class="bg-green-50 p-4 rounded-lg mt-6">
+                        <h4 class="font-semibold text-green-800">Deleting Branches</h4>
+                        <p class="mt-2">To delete a branch after it's been merged:</p>
+                        <div class="bg-green-100 p-4 rounded-lg mt-2">
+                            <code class="block">git branch -d branch-name</code>
+                        </div>
+                        <p class="mt-4">To force delete an unmerged branch:</p>
+                        <div class="bg-green-100 p-4 rounded-lg mt-2">
+                            <code class="block">git branch -D branch-name</code>
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Track completed lessons
+        let completedLessons = [];
+        let currentLesson = null;
+
+        lessonItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const lessonId = item.getAttribute('data-lesson');
+                currentLesson = parseInt(lessonId);
+                showLesson(lessonId);
+            });
+        });
+
+        function showLesson(lessonId) {
+            const lesson = lessons[lessonId];
+            if (!lesson) return;
+            
+            lessonTitle.textContent = lesson.title;
+            lessonContent.innerHTML = lesson.content;
+            lessonModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            
+            // Update navigation buttons
+            prevLessonBtn.classList.toggle('hidden', currentLesson <= 1);
+            nextLessonBtn.textContent = currentLesson >= Object.keys(lessons).length ? 'Finish' : 'Next';
+            
+            // Mark lesson as viewed
+            if (!completedLessons.includes(currentLesson)) {
+                completedLessons.push(currentLesson);
+                updateProgress();
+                
+                // Update lesson item UI
+                const lessonItem = document.querySelector(`.lesson-item[data-lesson="${lessonId}"]`);
+                if (lessonItem) {
+                    const statusIcon = lessonItem.querySelector('.lesson-status');
+                    statusIcon.classList.add('bg-blue-600', 'border-blue-600');
+                    statusIcon.querySelector('i').classList.remove('hidden');
+                }
+            }
+        }
+
+        closeLessonModal.addEventListener('click', () => {
+            lessonModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        });
+
+        nextLessonBtn.addEventListener('click', () => {
+            if (currentLesson >= Object.keys(lessons).length) {
+                lessonModal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            } else {
+                currentLesson++;
+                showLesson(currentLesson);
+            }
+        });
+
+        prevLessonBtn.addEventListener('click', () => {
+            if (currentLesson > 1) {
+                currentLesson--;
+                showLesson(currentLesson);
+            }
+        });
+
+        // Terminal simulator
+        const terminalInput = document.getElementById('terminalInput');
+        const terminalHistory = document.getElementById('terminalHistory');
+        const commandButtons = document.querySelectorAll('.command-btn');
+
+        terminalInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const command = terminalInput.value.trim();
+                if (command) {
+                    processCommand(command);
+                    terminalInput.value = '';
+                }
+            }
+        });
+
+        commandButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const command = button.getAttribute('data-command');
+                terminalInput.value = command;
+                terminalInput.focus();
+            });
+        });
+
+        function processCommand(command) {
+            // Add command to history
+            const commandElement = document.createElement('div');
+            commandElement.className = 'output mb-2';
+            commandElement.innerHTML = `<span class="prompt">$</span> <span class="command">${command}</span>`;
+            terminalHistory.appendChild(commandElement);
+            
+            // Process command
+            let output = '';
+            let isError = false;
+            
+            if (command === 'clear') {
+                terminalHistory.innerHTML = '';
+                return;
+            } else if (command === 'help') {
+                output = `
+                    Available commands:<br>
+                    git init - Initialize a new repository<br>
+                    git status - Show the working tree status<br>
+                    git add [file] - Add file contents to the index<br>
+                    git commit -m "message" - Record changes to the repository<br>
+                    git branch - List, create, or delete branches<br>
+                    git checkout [branch] - Switch branches<br>
+                    git log - Show commit logs<br>
+                    clear - Clear the terminal<br>
+                    help - Show this help message
+                `;
+            } else if (command.startsWith('git ')) {
+                const gitCommand = command.substring(4);
+                
+                if (gitCommand === 'init') {
+                    output = 'Initialized empty Git repository in /path/to/your/repository/.git/';
+                } else if (gitCommand === 'status') {
+                    output = `
+                        On branch main<br>
+                        No commits yet<br>
+                        <br>
+                        nothing to commit (create/copy files and use "git add" to track)
+                    `;
+                } else if (gitCommand === 'add .') {
+                    output = '';
+                } else if (gitCommand.startsWith('commit -m')) {
+                    output = `
+                        [main (root-commit) abc1234] Sample commit<br>
+                        1 file changed, 1 insertion(+)
+                    `;
+                } else if (gitCommand === 'branch') {
+                    output = '* main';
+                } else if (gitCommand.startsWith('checkout -b')) {
+                    const branchName = command.split(' ')[3] || 'new-branch';
+                    output = `Switched to a new branch '${branchName}'`;
+                } else if (gitCommand === 'log') {
+                    output = `
+                        commit abc1234567890 (HEAD -> main)<br>
+                        Author: Your Name &lt;your.email@example.com&gt;<br>
+                        Date:   Mon Jan 1 00:00:00 2023 +0000<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Initial commit
+                    `;
+                } else {
+                    output = `git: '${gitCommand.split(' ')[0]}' is not a git command. See 'git --help'.`;
+                    isError = true;
+                }
+                
+                // Track command usage for progress
+                if (!isError) {
+                    incrementCommandsPracticed();
+                }
+            } else {
+                output = `command not found: ${command.split(' ')[0]}`;
+                isError = true;
+            }
+            
+            // Add output to history
+            if (output) {
+                const outputElement = document.createElement('div');
+                outputElement.className = `output mb-2 ${isError ? 'error' : ''}`;
+                outputElement.innerHTML = output;
+                terminalHistory.appendChild(outputElement);
+            }
+            
+            // Scroll to bottom
+            terminalHistory.scrollTop = terminalHistory.scrollHeight;
+        }
+
+        // Quiz functionality
+        const submitQuizBtn = document.getElementById('submitQuizBtn');
+        const quizResults = document.getElementById('quizResults');
+        const quizScoreText = document.getElementById('quizScoreText');
+
+        submitQuizBtn.addEventListener('click', () => {
+            // Calculate score
+            let score = 0;
+            
+            // Question 1
+            const q1 = document.querySelector('input[name="q1"]:checked');
+            if (q1 && q1.value === 'C') score++;
+            
+            // Question 2
+            const q2 = document.querySelector('input[name="q2"]:checked');
+            if (q2 && q2.value === 'B') score++;
+            
+            // Question 3
+            const q3 = document.querySelector('input[name="q3"]:checked');
+            if (q3 && q3.value === 'C') score++;
+            
+            // Show results
+            quizResults.classList.remove('hidden');
+            quizScoreText.innerHTML = `Your score: <span class="font-bold">${score}</span>/3`;
+            
+            // Update progress
+            document.getElementById('quizScore').textContent = `${Math.round((score / 3) * 100)}%`;
+            updateProgress();
+            
+            // Scroll to results
+            quizResults.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Progress tracking
+        function updateProgress() {
+            const totalLessons = Object.keys(lessons).length;
+            const completedCount = completedLessons.length;
+            const progress = Math.round((completedCount / totalLessons) * 100);
+            
+            // Update progress bar
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            document.getElementById('progressPercent').textContent = `${progress}%`;
+            
+            // Update completed lessons count
+            document.getElementById('completedLessons').textContent = completedCount;
+            
+            // Update commands practiced (simulated)
+            const commandsElement = document.getElementById('commandsPracticed');
+            if (commandsElement.textContent === '0') {
+                commandsElement.textContent = '5'; // Simulate some practice
+            }
+        }
+
+        // Track commands practiced
+        let commandsPracticed = 0;
+        function incrementCommandsPracticed() {
+            commandsPracticed++;
+            document.getElementById('commandsPracticed').textContent = commandsPracticed;
+            updateProgress();
+        }
+
+        // Focus terminal input when tab is shown
+        document.querySelector('[data-tab="terminal"]').addEventListener('click', () => {
+            setTimeout(() => {
+                terminalInput.focus();
+            }, 100);
+        });
+    </script>
+</body>
+</html>
